@@ -31,7 +31,7 @@ export async function createTable(sequelize: Sequelize, Product: productInterfac
         type: DataTypes.DATEONLY,
         allowNull: false,
     }
-} as purchase_details, {
+} as any, {
   schema: "store_managment",
   createdAt: false,
 })
