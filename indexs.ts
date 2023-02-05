@@ -2,26 +2,22 @@ import { createTables, getConnection } from "./createTables";
 
 
 async function main() {
-    const connection = getConnection();
     const DB = await createTables();
     const client1 = await DB.Client.insert({
-        First_name: "Yaki",
-        Last_name: "lala",
-        Address: "ertrtr",
-        Phone_Number: "0506421356"
+        First_name: "shaol",
+        Last_name: "kahana",
+        Address: "yeruslem",
+        Phone_Number: "0503056114"
     });
     console.log(client1);
 
     const product1 = await DB.Product.insert({
-        Product_Name: "TypeScript1",
-        Product_description: "TypeScript1",
+        Product_Name: "tabel",
+        Product_description: "a good tabal",
         price_for_customer: 14.5,
         Satisfying_price: 12.5,
         Stock: 8
     })
-
-
-
 
     await DB.Purchase_details.insert({
         Customer_ID: client1.ID,
@@ -31,15 +27,6 @@ async function main() {
         Date_of_purchase:  new Date()
     })
 
-
-    // const s = await DB.Student.getStudent(student.id)
-    // console.log("Student: %j", s);
-
-    // const s2 = await DB.studentCourse.getStudentWithCurses(student.id)
-    // console.log("Student with courses: %j", s2);
-
-    // const s3 = await DB.studentCourse.getStudentWithCursesLazy(student.id)
-    // console.log("Student with courses lazy: %j", s3);
 }
 
 main().then(() => {
