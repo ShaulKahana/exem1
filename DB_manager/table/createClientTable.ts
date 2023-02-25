@@ -1,12 +1,11 @@
-import { Client } from "pg";
 import { Sequelize, DataTypes, Model, ModelStatic } from "sequelize";
-import { client } from "./model/client"
+import { clientModel } from "../model/client"
 
-type ClinentSchemaModel = Model<client>
+type ClinentSchemaModel = Model<clientModel>
 
 export interface clientInterface {
     Schema: ModelStatic<ClinentSchemaModel>
-    insert: (client: Omit<client, "ID">) => Promise<client>
+    insert: (client: Omit<clientModel, "ID">) => Promise<clientModel>
 }
 
 
@@ -38,11 +37,11 @@ export async function createTable(sequelize: Sequelize): Promise<clientInterface
         createdAt: false,
     })
     
-    await clientSchema.sync({})
+    await clientSchema.sync({ })
     return {
         Schema: clientSchema,
         async insert(Client) {
-            const result = await clientSchema.create(Client as client)
+            const result = await clientSchema.create(Client as clientModel)
             return result.toJSON();
         },
     };

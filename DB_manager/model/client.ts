@@ -1,4 +1,4 @@
-export interface client {
+export interface clientModel {
     ID: string,
     First_name: string ,
     Last_name:string,

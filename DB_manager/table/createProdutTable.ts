@@ -1,15 +1,16 @@
 import { Model, Sequelize, DataTypes, ModelStatic } from "sequelize";
-import { product } from "./model/product";
+import { productModel } from "../model/product";
+import{SellerInterface} from "../table/createSellerTable"
 
-type productSchemaModel = Model<product>
+type productSchemaModel = Model<productModel>
 
 export interface productInterface {
     Schema: ModelStatic<productSchemaModel>
-    insert: (course: Omit<product, "SKU">) => Promise<product>
+    insert: (Product: Omit<productModel, "SKU">,seller:string) => Promise<productModel>
 }
 
 
-export async function createTable(sequelize: Sequelize): Promise<productInterface> {
+export async function createTable(sequelize: Sequelize,Seller: SellerInterface["Schema"]): Promise<productInterface> {
     const productSchema = sequelize.define<productSchemaModel>("Product", {
         SKU: {
             type: DataTypes.UUID,
@@ -20,32 +21,24 @@ export async function createTable(sequelize: Sequelize): Promise<productInterfac
             type: DataTypes.TEXT,
             allowNull: false
         },
-        Product_description: {
-            type: DataTypes.TEXT,
-            allowNull: false
-        },
         price_for_customer: {
             type: DataTypes.INTEGER,
             allowNull: false,
         },
-        Satisfying_price: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
-        Stock: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        }
-    }, {
+    }as any, {
         schema: "store_managment",
         createdAt: false
     });
+
+    productSchema.belongsTo(Seller, { foreignKey: 'Product_seller' });
+
     
-    await productSchema.sync();
+    await productSchema.sync({});
     return {
         Schema: productSchema,
-        async insert(Product) {
-            const result = await productSchema.create(Product as product)
+        async insert(Product,seller) {
+            Product.Product_seller = seller;
+            const result = await productSchema.create(Product as productModel)
             return result.toJSON();
         },
     };
