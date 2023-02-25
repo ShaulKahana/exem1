@@ -23,14 +23,15 @@ export async function createTables() {
 
     const connection = getConnection()
 
-    const seller = createSellerTable(connection);
-
+    const seller = await createSellerTable(connection);
     const Client = await createClientTable(connection);
     const Product = await createProdutTable(connection,(await seller).Schema);
     const Purchase_details = await createPurchaseTable(connection, Product.Schema, Client.Schema);
+
     return {
         Client,
         Product,
+        seller,
         Purchase_details
     }
 }

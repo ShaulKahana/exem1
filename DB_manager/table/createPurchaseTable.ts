@@ -9,6 +9,8 @@ type purchase_details_Schema_Model = Model<purchase_details>
 export interface purchase_details_Interface {
   Schema: ModelStatic<purchase_details_Schema_Model>
   insert: (purchase_details: Omit<purchase_details, "Purchase_number">, product_ID:string, Customer_ID:string ) => Promise<purchase_details>
+  searchById: (id: string) => Promise<purchase_details|undefined>
+  getAllSellerspurchase:(sellerId:string) => Promise<Array<purchase_details_Schema_Model>|undefined>
 }
 
 export async function createTable(sequelize: Sequelize, Product: productInterface["Schema"], Client: clientInterface["Schema"]): Promise<purchase_details_Interface> {
@@ -31,6 +33,7 @@ export async function createTable(sequelize: Sequelize, Product: productInterfac
 
   Product.belongsToMany(Client, { through: purchase_details_Schema })
   Client.belongsToMany(Product, { through: purchase_details_Schema })
+
   await purchase_details_Schema.sync({})
 
   return {
@@ -40,7 +43,27 @@ export async function createTable(sequelize: Sequelize, Product: productInterfac
       Purchase_details.Customer_ID = Customer_ID
       const result = await purchase_details_Schema.create(Purchase_details as purchase_details)
       return result.toJSON();
-    }
+    },
+    async searchById(id: string) {
+      const result = await purchase_details_Schema.findByPk(id)
+      return result?.toJSON();
+    },
+    async getAllSellerspurchase(sellerId) {
+      const result = await purchase_details_Schema.findAll({
+          include: [
+            {
+                model: Product,
+                as: 'pruduct_id',
+                where: {
+                  Product_seller: sellerId   
+                }     
+             },
+        ]
+    
+      });
+
+      return (result ? JSON.parse(result?.toString()) : undefined);
+  }
   }
 }
 

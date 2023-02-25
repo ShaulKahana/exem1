@@ -6,6 +6,7 @@ type ClinentSchemaModel = Model<clientModel>
 export interface clientInterface {
     Schema: ModelStatic<ClinentSchemaModel>
     insert: (client: Omit<clientModel, "ID">) => Promise<clientModel>
+    searchById: (id: string) => Promise<clientModel|undefined>
 }
 
 
@@ -44,5 +45,9 @@ export async function createTable(sequelize: Sequelize): Promise<clientInterface
             const result = await clientSchema.create(Client as clientModel)
             return result.toJSON();
         },
+        async searchById(id: string) {
+            const result = await clientSchema.findByPk(id)
+            return result?.toJSON();
+        }
     };
 }
